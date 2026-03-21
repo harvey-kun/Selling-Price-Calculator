@@ -4,10 +4,11 @@
 #include <stdlib.h>
 using namespace std;
 
+//Global variables
+
 const int MAX_BUSINESSES = 10;
 const int MAX_INGREDIENTS = 20;
 
-//Global variables
 int totalBusinesses = 0;
 
 //Global arrays
@@ -93,8 +94,8 @@ void m(int margin){
 
 int menu1(){
     int x;
-
-    while(true) {  // Loop until user chooses to end
+        // Loop until user chooses to end
+    while(true) {  
         system("cls||clear");
         header("Selling Price Calculator");
         m(1);
@@ -104,7 +105,7 @@ int menu1(){
             menu2();
         } else {
             // End program
-            break;  
+            break;
         }
     }
 
