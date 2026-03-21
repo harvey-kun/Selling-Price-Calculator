@@ -55,7 +55,7 @@ int main(){
     if(choice == 1){
         menu2();
     }
-    
+
     return 0;
 }
 
@@ -210,9 +210,10 @@ int menu2(){
         }
     }
 
-    m(1);
-    cout << "Press Enter...";
-    cin.ignore();
-    cin.get();
-    return 0;
+    int nextChoice = option("Add another product", "Back");
+    if(nextChoice == 1){
+        menu2();
+    }else{
+        main();
+    }
 }
