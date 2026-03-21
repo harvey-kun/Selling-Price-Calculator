@@ -7,13 +7,18 @@ using namespace std;
 const int MAX_BUSINESSES = 10;
 const int MAX_INGREDIENTS = 20;
 
-// Global arrays
+//Global variables
+int totalBusinesses = 0;
+
+//Global arrays
+string productNames[MAX_BUSINESSES];
 string businessNames[MAX_BUSINESSES][MAX_INGREDIENTS];
 double businessUnitCost[MAX_BUSINESSES][MAX_INGREDIENTS];
 double businessQuantity[MAX_BUSINESSES][MAX_INGREDIENTS];
 double businessYield[MAX_BUSINESSES];
 int businessIngredientCount[MAX_BUSINESSES];
-int totalBusinesses = 0;
+
+
 
 // Template functions
 template <typename T>
@@ -49,13 +54,7 @@ int option(string option1,string option2);
 int option(string option1,string option2, string option3);
 
 int main(){
-    int choice = 1;
-
-    choice = menu1();
-    if(choice == 1){
-        menu2();
-    }
-
+    menu1();
     return 0;
 }
 
@@ -94,126 +93,155 @@ void m(int margin){
 
 int menu1(){
     int x;
-    system("cls||clear");
-    header("Selling Price Calculator");
-    m(1);
-    x = option("Start Inputting Data","End Program");
-    return x;
+
+    while(true) {  // Loop until user chooses to end
+        system("cls||clear");
+        header("Selling Price Calculator");
+        m(1);
+        x = option("Start Inputting Data","End Program");
+
+        if(x == 1){
+            menu2();
+        } else {
+            // End program
+            break;  
+        }
+    }
+
+    return 0;
 }
 
 int menu2(){
     int choice;
-    system("cls||clear");
-    header("Selling Price Calculator");
-    m(1);
 
-    choice = option("New Business","Existing Business","Back");
+    while(true) {  // Loop instead of recursion
+        system("cls||clear");
+        header("Selling Price Calculator");
+        m(1);
 
-    if(choice == 1){  // NEW BUSINESS
-        if(totalBusinesses < MAX_BUSINESSES){
-            system("cls||clear");
-            header("Selling Price Calculator");
-            string productName;
-            cout << "Product name: ";
-            cin.ignore();
-            getline(cin, productName);
+        choice = option("New Business","Existing Business","Back");
 
-            int numIngredients;
-            cout << "Number of ingredients: ";
-            cin >> numIngredients;
+        if(choice == 1){  // NEW BUSINESS
+            if(totalBusinesses < MAX_BUSINESSES){
+                system("cls||clear");
+                header("Selling Price Calculator");
 
-            if(numIngredients <= MAX_INGREDIENTS){
-                for(int i = 0; i < numIngredients; i++){
-                    cout << "\nIngredient " << i+1 << ":" << endl;
-                    cout << "Name: ";
-                    cin.ignore();
-                    getline(cin, businessNames[totalBusinesses][i]);
-                    cout << "Cost per unit (PHP): ";
-                    cin >> businessUnitCost[totalBusinesses][i];
-                    cout << "Quantity used: ";
-                    cin >> businessQuantity[totalBusinesses][i];
+                // Store product name properly
+                string productName;
+                cout << "Product name: ";
+                cin.ignore();
+                getline(cin, productName);
+                productNames[totalBusinesses] = productName;
+
+                int numIngredients;
+                cout << "Number of ingredients: ";
+                cin >> numIngredients;
+
+                if(numIngredients <= MAX_INGREDIENTS){
+                    for(int i = 0; i < numIngredients; i++){
+                        cout << "\nIngredient " << i+1 << ":" << endl;
+                        cout << "Name: ";
+                        cin.ignore();
+                        getline(cin, businessNames[totalBusinesses][i]);
+                        cout << "Cost per unit (PHP): ";
+                        cin >> businessUnitCost[totalBusinesses][i];
+                        cout << "Quantity used: ";
+                        cin >> businessQuantity[totalBusinesses][i];
+                    }
+
+                    businessIngredientCount[totalBusinesses] = numIngredients;
+
+                    cout << "\nProduction yield (how many products made): ";
+                    cin >> businessYield[totalBusinesses];
+
+                    double ingredientCosts[MAX_INGREDIENTS];
+                    for(int i = 0; i < numIngredients; i++){
+                        ingredientCosts[i] = businessUnitCost[totalBusinesses][i] * businessQuantity[totalBusinesses][i];
+                    }
+
+                    double totalCost = calcTotalCost(ingredientCosts, numIngredients);
+                    double costPerUnit = calcCostPerUnit(totalCost, businessYield[totalBusinesses]);
+
+                    double profitPercent;
+                    cout << "Desired profit (%): ";
+                    cin >> profitPercent;
+
+                    double sellingPrice = calcSellingPrice(costPerUnit, profitPercent);
+
+                    cout << "\n=== RESULTS ===" << endl;
+                    cout << "Product: " << productName << endl;
+                    cout << "Total ingredient cost: PHP " << fixed << setprecision(2) << totalCost << endl;
+                    cout << "Yield: " << businessYield[totalBusinesses] << " units" << endl;
+                    cout << "Cost per unit: PHP " << fixed << setprecision(2) << costPerUnit << endl;
+                    cout << "Selling price per unit: PHP " << fixed << setprecision(2) << sellingPrice << endl;
+
+                    totalBusinesses++;
+                    cout << "\nBusiness saved!" << endl;
                 }
-
-                businessIngredientCount[totalBusinesses] = numIngredients;
-
-                cout << "\nProduction yield (how many products made): ";
-                cin >> businessYield[totalBusinesses];
-
-                double ingredientCosts[MAX_INGREDIENTS];
-                for(int i = 0; i < numIngredients; i++){
-                    ingredientCosts[i] = businessUnitCost[totalBusinesses][i] * businessQuantity[totalBusinesses][i];
-                }
-
-                double totalCost = calcTotalCost(ingredientCosts, numIngredients);
-                double costPerUnit = calcCostPerUnit(totalCost, businessYield[totalBusinesses]);
-
-                double profitPercent;
-                cout << "Desired profit (%): ";
-                cin >> profitPercent;
-
-                double sellingPrice = calcSellingPrice(costPerUnit, profitPercent);
-
-                cout << "\n=== RESULTS ===" << endl;
-                cout << "Total ingredient cost: PHP " << fixed << setprecision(2) << totalCost << endl;
-                cout << "Yield: " << businessYield[totalBusinesses] << " units" << endl;
-                cout << "Cost per unit: PHP " << fixed << setprecision(2) << costPerUnit << endl;
-                cout << "Selling price per unit: PHP " << fixed << setprecision(2) << sellingPrice << endl;
-
-                totalBusinesses++;
-                cout << "\nBusiness saved!" << endl;
+            } else {
+                cout << "\nMaximum businesses reached!" << endl;
             }
-        }
 
-    } else if(choice == 2){  // EXISTING BUSINESS
-        if(totalBusinesses == 0){
-            cout << "\nNo businesses saved!" << endl;
-        } else {
-            cout << "\nSaved Businesses:" << endl;
-            for(int i = 0; i < totalBusinesses; i++){
-                cout << "[" << i+1 << "] " << businessNames[i][0] << endl;
-            }
-
-            int busChoice;
-            cout << "Select: ";
-            cin >> busChoice;
-
-            if(busChoice > 0 && busChoice <= totalBusinesses){
-                int busIndex = busChoice - 1;
-                int numIng = businessIngredientCount[busIndex];
-
-                double ingredientCosts[MAX_INGREDIENTS];
-                for(int i = 0; i < numIng; i++){
-                    ingredientCosts[i] = businessUnitCost[busIndex][i] * businessQuantity[busIndex][i];
+        } else if(choice == 2){  // EXISTING BUSINESS
+            if(totalBusinesses == 0){
+                cout << "\nNo businesses saved!" << endl;
+            } else {
+                system("cls||clear");
+                header("Saved Businesses");
+                cout << "\nSaved Businesses:" << endl;
+                for(int i = 0; i < totalBusinesses; i++){
+                    cout << "[" << i+1 << "] " << productNames[i] << endl;
                 }
-                double totalProductionCost = calcTotalCost(ingredientCosts, numIng);
 
-                double actualSellPrice, unitsSold;
-                cout << "\nActual sales:" << endl;
-                cout << "Selling price per unit (PHP): ";
-                cin >> actualSellPrice;
-                cout << "Units sold: ";
-                cin >> unitsSold;
+                int busChoice;
+                cout << "\nSelect: ";
+                cin >> busChoice;
 
-                double revenue = actualSellPrice * unitsSold;
-                double profitEarned = calcProfit(revenue, totalProductionCost);
+                if(busChoice > 0 && busChoice <= totalBusinesses){
+                    int busIndex = busChoice - 1;
+                    int numIng = businessIngredientCount[busIndex];
 
-                cout << "\n=== PROFIT REPORT ===" << endl;
-                cout << "Total production cost: PHP " << fixed << setprecision(2) << totalProductionCost << endl;
-                cout << "Revenue: PHP " << fixed << setprecision(2) << revenue << endl;
+                    double ingredientCosts[MAX_INGREDIENTS];
+                    for(int i = 0; i < numIng; i++){
+                        ingredientCosts[i] = businessUnitCost[busIndex][i] * businessQuantity[busIndex][i];
+                    }
+                    double totalProductionCost = calcTotalCost(ingredientCosts, numIng);
 
-                if(profitEarned >= 0){
-                    cout << "Profit earned: PHP " << fixed << setprecision(2) << profitEarned << endl;
+                    double unitsSold;
+                    cout << "\n=== " << productNames[busIndex] << " ===" << endl;
+                    cout << "Total production cost: PHP " << fixed << setprecision(2) << totalProductionCost << endl;
+                    cout << "Units sold: ";
+                    cin >> unitsSold;
+
+                    double revenue = (totalProductionCost / businessYield[busIndex]) * 1.3 * unitsSold; // Use calculated price with 30% markup
+                    double profitEarned = calcProfit(revenue, totalProductionCost);
+
+                    cout << "\n=== PROFIT REPORT ===" << endl;
+                    cout << "Product: " << productNames[busIndex] << endl;
+                    cout << "Total production cost: PHP " << fixed << setprecision(2) << totalProductionCost << endl;
+                    cout << "Revenue: PHP " << fixed << setprecision(2) << revenue << endl;
+
+                    if(profitEarned >= 0){
+                        cout << "Profit earned: PHP " << fixed << setprecision(2) << profitEarned << endl;
+                    } else {
+                        cout << "Loss: PHP " << fixed << setprecision(2) << (-profitEarned) << endl;
+                    }
                 } else {
-                    cout << "Loss: PHP " << fixed << setprecision(2) << profitEarned << endl;
+                    cout << "Invalid selection!" << endl;
                 }
+            }
+
+        } else if(choice == 3){  // BACK
+            break;  // Exit the loop and return to menu1()
+        }
+
+        // Only show "Add another/Back" if not choosing Back
+        if(choice != 3){
+            int nextChoice = option("Add another product", "Back");
+            if(nextChoice == 2){
+               break;
             }
         }
     }
-
-    int nextChoice = option("Add another product", "Back");
-    if(nextChoice == 1){
-        menu2();
-    }else{
-        main();
-    }
+    return 0;
 }
