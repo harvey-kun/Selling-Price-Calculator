@@ -19,9 +19,7 @@ double businessQuantity[MAX_BUSINESSES][MAX_INGREDIENTS];
 double businessYield[MAX_BUSINESSES];
 int businessIngredientCount[MAX_BUSINESSES];
 
-
-
-// Template functions
+//Template functions
 template <typename T>
 T calcTotalCost(T costs[], int size) {
     T total = 0.0;
@@ -46,7 +44,7 @@ T calcProfit(T revenue, T totalCost) {
     return revenue - totalCost;
 }
 
-// Function prototypes
+//Functions
 void header(string txt);
 void m(int margin);
 int menu1();
@@ -92,22 +90,19 @@ void m(int margin){
     }
 }
 
-int menu1(){
+int menu1() {
     int x;
-        // Loop until user chooses to end
-    while(true) {
+
+    do {
         system("cls||clear");
         header("Selling Price Calculator");
         m(1);
-        x = option("Start Inputting Data","End Program");
+        x = option("Start Inputting Data", "End Program");
 
-        if(x == 1){
+        if (x == 1) {
             menu2();
-        } else {
-            // End program
-            break;
         }
-    }
+    } while (x == 1);
 
     return 0;
 }
